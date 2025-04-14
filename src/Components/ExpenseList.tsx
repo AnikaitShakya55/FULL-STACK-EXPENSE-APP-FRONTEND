@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ExpenseList.module.css";
+import { useNavigate } from "react-router-dom";
 
 function ExpenseList() {
+  const navigate = useNavigate("");
   const [expenses, setExpenses] = useState([]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+
     async function fetchExpenses() {
       try {
         const response = await fetch(
@@ -22,6 +29,7 @@ function ExpenseList() {
     }
 
     fetchExpenses();
+    // eslint-disable-next-line
   }, []);
 
   const handleDelete = async (id: number) => {

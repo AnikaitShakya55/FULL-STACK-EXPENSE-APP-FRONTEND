@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./ExpenseForm.module.css";
+import { useNavigate } from "react-router-dom";
 
 const ExpenseForm = () => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -9,12 +11,25 @@ const ExpenseForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+    // eslint-disable-next-line
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const newExpense = { title, description, amount: Number(amount), date };
+    const newExpense = {
+      title,
+      description,
+      amount: Number(amount),
+      date,
+    };
 
     try {
       const response = await fetch(
@@ -25,11 +40,15 @@ const ExpenseForm = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(newExpense),
+          credentials: "include",
         }
       );
 
       if (!response.ok) {
         throw new Error("Failed to add expense");
+      } else {
+        const data = response.json();
+        console.log(data);
       }
 
       setDescription("");

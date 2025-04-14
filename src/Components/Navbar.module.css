@@ -1,0 +1,50 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  background-color: #1e293b;
+  color: white !important;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.navbarLeft,
+.navbarCenter,
+.navbarRight {
+  display: flex;
+  align-items: center;
+}
+
+.navbarCenter {
+  gap: 1.5rem;
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #38bdf8;
+}
+
+.authButton {
+  background-color: #38bdf8;
+  border: none;
+  padding: 0.5rem 1rem;
+  color: black;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.authButton:hover {
+  background-color: #0ea5e9;
+}

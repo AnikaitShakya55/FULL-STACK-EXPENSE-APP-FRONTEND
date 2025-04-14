@@ -39,7 +39,8 @@ const Login = () => {
       const resData = await response.json();
 
       if (response.ok) {
-        navigate("/add-expense");
+        navigate("/expenseForm");
+        localStorage.setItem("token", resData.token);
       } else {
         throw new Error(resData.message || "Something went wrong");
       }
