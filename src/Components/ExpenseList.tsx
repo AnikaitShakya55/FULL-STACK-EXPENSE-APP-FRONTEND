@@ -8,6 +8,7 @@ function ExpenseList() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const user_Id = localStorage.getItem("user_id");
     if (!token) {
       navigate("/login");
     }
@@ -15,7 +16,7 @@ function ExpenseList() {
     async function fetchExpenses() {
       try {
         const response = await fetch(
-          "http://localhost:5000/expense_api/getExpenses"
+          `http://localhost:5000/expense_api/getUserExpense/${user_Id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch expenses");

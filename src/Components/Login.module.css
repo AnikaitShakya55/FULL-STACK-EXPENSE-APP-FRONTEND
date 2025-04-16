@@ -76,3 +76,18 @@ h2 {
   color: #0056b3;
   text-decoration: underline;
 }
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.forgotPassword {
+  text-align: right;
+  margin-top: 10px;
+}

@@ -4,9 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [forgotEmail, setForgotEmail] = useState("");
+
   const navigate = useNavigate();
 
   const toggleForm = () => {
@@ -14,6 +17,7 @@ const Login = () => {
     setUsername("");
     setEmail("");
     setPassword("");
+    setShowForgotPassword(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,8 +28,8 @@ const Login = () => {
 
     try {
       const endpoint = isSignup
-        ? `${process.env.REACT_APP_BACKEND_URL}/user_api/register`
-        : `${process.env.REACT_APP_BACKEND_URL}/user_api/login`;
+        ? `http://localhost:5000/user_api/register`
+        : `http://localhost:5000/user_api/login`;
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -41,6 +45,7 @@ const Login = () => {
       if (response.ok) {
         navigate("/expenseForm");
         localStorage.setItem("token", resData.token);
+        localStorage.setItem("user_id", resData.user.id);
       } else {
         throw new Error(resData.message || "Something went wrong");
       }
@@ -51,46 +56,116 @@ const Login = () => {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user_api/password/forgotpassword`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: forgotEmail }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to send reset email");
+      }
+
+      alert("Password reset link sent to your email.");
+      setForgotEmail("");
+      setShowForgotPassword(false);
+    } catch (error: any) {
+      console.error("Forgot password error:", error.message);
+      alert(error.message);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>
-        <h2>{isSignup ? "Sign Up" : "Login"}</h2>
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {isSignup && (
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className={styles.input}
-            />
-          )}
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={styles.input}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
-            required
-          />
-          <button type="submit" className={styles.button}>
-            {isSignup ? "Sign Up" : "Login"}
-          </button>
-        </form>
-        <p className={styles.toggleText}>
-          {isSignup ? "Already have an account?" : "Don't have an account?"}
-          <span className={styles.toggleLink} onClick={toggleForm}>
-            {isSignup ? " Login" : " Sign Up"}
-          </span>
-        </p>
+        {!showForgotPassword ? (
+          <>
+            <h2>{isSignup ? "Sign Up" : "Login"}</h2>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              {isSignup && (
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className={styles.input}
+                />
+              )}
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={styles.input}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.input}
+                required
+              />
+              <button type="submit" className={styles.button}>
+                {isSignup ? "Sign Up" : "Login"}
+              </button>
+            </form>
+            {!isSignup && (
+              <p className={styles.forgotPassword}>
+                <button
+                  type="button"
+                  className={styles.linkButton}
+                  onClick={() => setShowForgotPassword(true)}
+                >
+                  Forgot Password?
+                </button>
+              </p>
+            )}
+            <p className={styles.toggleText}>
+              {isSignup ? "Already have an account?" : "Don't have an account?"}
+              <span className={styles.toggleLink} onClick={toggleForm}>
+                {isSignup ? " Login" : " Sign Up"}
+              </span>
+            </p>
+          </>
+        ) : (
+          <>
+            <h2>Forgot Password</h2>
+            <form onSubmit={handleForgotPassword} className={styles.form}>
+              <input
+                type="email"
+                placeholder="Enter your registered email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                className={styles.input}
+                required
+              />
+              <button type="submit" className={styles.button}>
+                Send Reset Link
+              </button>
+              <button
+                type="button"
+                className={styles.linkButton}
+                onClick={() => setShowForgotPassword(false)}
+              >
+                Back to Login
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );

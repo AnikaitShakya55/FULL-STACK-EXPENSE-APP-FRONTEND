@@ -1,0 +1,37 @@
+.mainContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.leaderboardList {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.leaderboardItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+}
+
+.leaderboardItem:last-child {
+  border-bottom: none;
+}
+
+.name {
+  font-weight: 600;
+  color: #333;
+}
+
+.expense {
+  color: #555;
+}

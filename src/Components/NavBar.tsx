@@ -8,7 +8,7 @@ function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    setIsLoggedIn(token);
   }, [isLoggedIn]);
 
   const handleLogout = () => {
@@ -28,6 +28,9 @@ function Navbar() {
         </Link>
         <Link to="/expenses" className={styles.navLink}>
           Expense List
+        </Link>
+        <Link to="/showLeaderBoard" className={styles.navLink}>
+          Show LeaderBoard
         </Link>
       </div>
       <div className={styles.navbarRight}>
