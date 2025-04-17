@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ExpenseList.module.css";
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // import the plugin separately
 
 function ExpenseList() {
   const navigate = useNavigate("");
@@ -62,26 +64,63 @@ function ExpenseList() {
 
   const formatDate = (isoString) => new Date(isoString).toLocaleDateString();
 
+  const downloadReportHandler = () => {
+    const doc = new jsPDF();
+
+    const tableColumn = ["Date", "Title", "Description", "Amount"];
+    const tableRows = [];
+
+    expenses.forEach((exp: any) => {
+      const expenseData= [
+        new Date(exp.date).toLocaleDateString(),
+        exp.title,
+        exp.description,
+        exp.amount,
+      ];
+      tableRows.push(expenseData);
+    });
+
+    doc.text("Expense Report", 14, 10);
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("expenses_report.pdf");
+  };
+
   return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>Expense List</h2>
-      <ul className={styles.list}>
-        {expenses?.map((expense) => (
-          <li key={expense.id} className={styles.listItem}>
-            <span>{expense.title}</span>
-            <span>{expense.description}</span>
-            <span>${expense.amount}</span>
-            <span>{formatDate(expense.date)}</span>
-            <button
-              onClick={() => handleDelete(expense.id)}
-              className={styles.deleteButton}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
-      {expenses.length === 0 && <p className={styles.noExpense}>No Expenses</p>}
+    <div className={styles.mainContainer}>
+      <div className={styles.container}>
+        <button
+          className={styles.downloadReport}
+          onClick={downloadReportHandler}
+        >
+          Download Report
+        </button>
+        <h2 className={styles.heading}>Expense List</h2>
+
+        <ul className={styles.list}>
+          {expenses?.map((expense) => (
+            <li key={expense.id} className={styles.listItem}>
+              <span>{expense.title}</span>
+              <span>{expense.description}</span>
+              <span>${expense.amount}</span>
+              <span>{formatDate(expense.date)}</span>
+              <button
+                onClick={() => handleDelete(expense.id)}
+                className={styles.deleteButton}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+        {expenses.length === 0 && (
+          <p className={styles.noExpense}>No Expenses</p>
+        )}
+      </div>
     </div>
   );
 }
