@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Login.module.css";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isSignup, setIsSignup] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [username, setUsername] = useState("");
@@ -10,7 +11,12 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [forgotEmail, setForgotEmail] = useState("");
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/expenseForm");
+    }
+    // eslint-disable-next-line
+  }, []);
 
   const toggleForm = () => {
     setIsSignup((prev) => !prev);
@@ -43,9 +49,10 @@ const Login = () => {
       const resData = await response.json();
 
       if (response.ok) {
-        navigate("/expenseForm");
         localStorage.setItem("token", resData.token);
         localStorage.setItem("user_id", resData.user.id);
+        window.location.reload();
+        navigate("/expenseForm");
       } else {
         throw new Error(resData.message || "Something went wrong");
       }

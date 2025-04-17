@@ -4,7 +4,7 @@ import styles from "./Navbar.module.css";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<string | null>();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -13,7 +13,7 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setIsLoggedIn(false);
+    setIsLoggedIn(null);
     navigate("/login");
   };
 
@@ -34,7 +34,7 @@ function Navbar() {
         </Link>
       </div>
       <div className={styles.navbarRight}>
-        {isLoggedIn ? (
+        {isLoggedIn !== null ? (
           <button onClick={handleLogout} className={styles.authButton}>
             Logout
           </button>
