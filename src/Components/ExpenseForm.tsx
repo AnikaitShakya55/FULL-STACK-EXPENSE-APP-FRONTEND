@@ -10,6 +10,7 @@ const ExpenseForm = () => {
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");

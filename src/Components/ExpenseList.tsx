@@ -6,7 +6,22 @@ import autoTable from "jspdf-autotable"; // import the plugin separately
 
 function ExpenseList() {
   const navigate = useNavigate("");
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState<any>([]);
+  // pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const totalPages = Math.ceil(expenses.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentExpenses = expenses.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -71,7 +86,7 @@ function ExpenseList() {
     const tableRows = [];
 
     expenses.forEach((exp: any) => {
-      const expenseData= [
+      const expenseData = [
         new Date(exp.date).toLocaleDateString(),
         exp.title,
         exp.description,
@@ -102,7 +117,7 @@ function ExpenseList() {
         <h2 className={styles.heading}>Expense List</h2>
 
         <ul className={styles.list}>
-          {expenses?.map((expense) => (
+          {currentExpenses?.map((expense) => (
             <li key={expense.id} className={styles.listItem}>
               <span>{expense.title}</span>
               <span>{expense.description}</span>
@@ -120,6 +135,46 @@ function ExpenseList() {
         {expenses.length === 0 && (
           <p className={styles.noExpense}>No Expenses</p>
         )}
+
+        {/* Pagination Controls */}
+        {expenses.length > itemsPerPage && (
+          <div className={styles.pagination}>
+            <button
+              onClick={handlePrevious}
+              disabled={currentPage === 1}
+              className={styles.pageButton}
+            >
+              Previous
+            </button>
+            <span className={styles.pageInfo}>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className={styles.pageButton}
+            >
+              Next
+            </button>
+          </div>
+        )}
+        {/* SELECT WRAPPER */}
+        <div className={styles.selectWrapper}>
+          <label htmlFor="itemsPerPage">Show per page: </label>
+          <select
+            id="itemsPerPage"
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(parseInt(e.target.value));
+              setCurrentPage(1); // Reset to first page
+            }}
+            className={styles.selectDropdown}
+          >
+            <option value={3}>3</option>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+          </select>
+        </div>
       </div>
     </div>
   );
